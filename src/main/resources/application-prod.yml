@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://dying.asia:3310/user_center
+    username: root
+    password: root
+  session:
+    timeout: 86400
