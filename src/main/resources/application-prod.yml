@@ -6,3 +6,5 @@ spring:
     password: root
   session:
     timeout: 86400
+knife4j:
+  enable: false

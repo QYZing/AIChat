@@ -3,6 +3,7 @@ package com.dying.usercenter.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dying.usercenter.common.ErrorCode;
+import com.dying.usercenter.constant.UserConstant;
 import com.dying.usercenter.exception.BusinessException;
 import com.dying.usercenter.model.domain.User;
 import com.dying.usercenter.service.UserService;
@@ -10,13 +11,17 @@ import com.dying.usercenter.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import static com.dying.usercenter.constant.UserConstant.ADMIN_ROLE;
 import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
@@ -83,7 +88,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public User userLogin(String userAccount, String userPassword , HttpServletRequest request) {
         //校验
         if(StringUtils.isAnyBlank(userAccount , userPassword)){
-            //todo 修改自定义异常
             throw new BusinessException(ErrorCode.NULL_ERROR , "参数不完整");
         }
         if(userAccount.length() < 4){
@@ -142,7 +146,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setUserRole(originUser.getUserRole());
         safetyUser.setUserStatus(originUser.getUserStatus());
         safetyUser.setCreateTime(originUser.getCreateTime());
-        return originUser;
+        safetyUser.setTags(originUser.getTags());
+        safetyUser.setProfile(originUser.getProfile());
+        return safetyUser;
     }
 
     /**
@@ -154,6 +160,72 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         request.getSession().removeAttribute(USER_LOGIN_STATE);
         return 1;
     }
+
+
+    /**
+     * 根据标签搜索用户
+     *
+     * @param tagNameList 用户拥有的标签
+     * @return
+     */
+    @Override
+    public List<User> searchUsersByTags(List<String> tagNameList){
+        if(CollectionUtils.isEmpty(tagNameList)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        for(String tagName : tagNameList){
+            queryWrapper = queryWrapper.like("tags" , tagName);
+        }
+        List<User> userList = userMapper.selectList(queryWrapper);
+        return userList.stream().map(this::getSafetyUser).collect(Collectors.toList());
+    }
+
+    @Override
+    public int updateUser(User user, User loginUser) {
+        if(user == null || loginUser == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        long id = user.getId();
+        if(id <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //仅管理员和自己可修改
+        if(!isAdmin(loginUser) && id != loginUser.getId()){
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        User oldUser = userMapper.selectById(id);
+        if(oldUser == null){
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        }
+        return userMapper.updateById(user);
+    }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        if(request == null){
+            return null;
+        }
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        if(userObj == null){
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        return (User) userObj;
+    }
+
+    @Override
+    public boolean isAdmin(HttpServletRequest request) {
+        // 鉴权 仅管理员查询
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User user = (User) userObj;
+        return user != null && user.getUserRole() == ADMIN_ROLE;
+    }
+
+    @Override
+    public boolean isAdmin(User userLogin) {
+        return userLogin != null && userLogin.getUserRole() == ADMIN_ROLE;
+    }
+
 }
 
 

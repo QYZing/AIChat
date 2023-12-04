@@ -4,6 +4,10 @@ import com.dying.usercenter.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static com.dying.usercenter.constant.UserConstant.ADMIN_ROLE;
+import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
 * @author dying
@@ -43,4 +47,42 @@ public interface UserService extends IService<User> {
      * @return
      */
     int userLogout(HttpServletRequest request);
+
+    /**
+     * 根据标签搜索用户
+     *
+     * @param tagList 用户拥有的标签
+     * @return
+     */
+    List<User> searchUsersByTags(List<String> tagList);
+
+    /**
+     * 更新用户
+     *
+     * @param user 需要更新的用户信息
+     * @param loginUser 当前登录的用户
+     * @return
+     */
+    int updateUser(User user , User loginUser);
+
+    /**
+     * 获取当前登录用户信息
+     * @return
+     */
+    User getLoginUser(HttpServletRequest request);
+
+    /**
+     * 是否为管理员
+     * @param request 请求
+     * @return true 是
+     */
+    boolean isAdmin(HttpServletRequest request);
+
+
+    /**
+     * 是否为管理员
+     * @param userLogin 用户
+     * @return true 是
+     */
+    boolean isAdmin(User userLogin);
 }

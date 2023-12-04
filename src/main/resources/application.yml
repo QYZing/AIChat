@@ -6,20 +6,49 @@ spring:
     url: jdbc:mysql:// 172.17.118.108:3306/dying
     username: root
     password: 123456
-    # session 失效时间
+    # session 失效时间 分钟
   session:
     timeout: 86400
+    # 自动讲session 存在redis中
+    store-type: redis
+  redis:
+    port: 6379
+    host: localhost
+    database: 0
 
 server:
   port: 8080
   servlet:
     context-path: /api
+    session:
+      cookie:
+        domain: localhost
 
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-delete-field: isDelete
       logic-delete-value: 1
       logic-not-delete-value: 0
+
+knife4j:
+  enable: true
+  openapi:
+    title: Knife4j官方文档
+    description: "`我是测试`,**你知道吗**"
+    email: xxxxxx@foxmail.com
+    concat: dying
+    url: https://docs.xxxxxxx.com
+    version: v4.0
+    license: Apache 2.0
+    license-url: https://xxxxxxcom/
+    terms-of-service-url: https://xxxxxx.com/
+    group:
+      test1:
+        group-name: userCenter
+        api-rule: package
+        api-rule-resources:
+          - com.dying.usercenter.controller

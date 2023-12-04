@@ -1,6 +1,4 @@
-
-
-create table user
+create table dying.user
 (
     id           bigint auto_increment
         primary key,
@@ -11,10 +9,12 @@ create table user
     userPassword varchar(512)                       not null comment '密码',
     phone        varchar(128)                       null comment '电话',
     email        varchar(512)                       null comment '邮箱',
+    profile      varchar(512)                       null comment '个人简介',
     userStatus   int      default 0                 not null comment '状态',
     createTime   datetime default CURRENT_TIMESTAMP null comment '创建时间',
     updateTime   datetime default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete     tinyint  default 0                 not null comment '是否删除',
-    userRole     int      default 0                 not null comment '0 - 普通用户 1 - 管理员'
+    userRole     int      default 0                 not null comment '0 - 普通用户 1 - 管理员',
+    tags         varchar(1024)                      null comment '标签 json 列表 '
 );
 
