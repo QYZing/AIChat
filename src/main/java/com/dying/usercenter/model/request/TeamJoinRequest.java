@@ -1,8 +1,9 @@
-package com.dying.usercenter.model.domain.request;
+package com.dying.usercenter.model.request;
 
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 用户登录请求体
@@ -10,9 +11,13 @@ import java.io.Serializable;
  * @author dying
  */
 @Data
-public class UserLoginRequest implements Serializable {
+public class TeamJoinRequest implements Serializable {
+
     private static final long serialVersionUID = 3191241716373120793L;
 
-    private String userAccount;
-    private String userPassword;
+    private Long teamId;
+
+    private String password;
+
+
 }

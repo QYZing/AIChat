@@ -1,4 +1,4 @@
-package com.dying.usercenter.model.domain.request;
+package com.dying.usercenter.model.request;
 
 import lombok.Data;
 

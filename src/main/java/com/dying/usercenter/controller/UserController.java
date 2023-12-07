@@ -2,18 +2,15 @@ package com.dying.usercenter.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dying.usercenter.common.BaseResponse;
 import com.dying.usercenter.common.ErrorCode;
 import com.dying.usercenter.common.ResultUtils;
-import com.dying.usercenter.config.RedisTemplateConfig;
 import com.dying.usercenter.exception.BusinessException;
 import com.dying.usercenter.model.domain.User;
-import com.dying.usercenter.model.domain.request.UserLoginRequest;
-import com.dying.usercenter.model.domain.request.UserRegisterRequest;
+import com.dying.usercenter.model.request.UserLoginRequest;
+import com.dying.usercenter.model.request.UserRegisterRequest;
 import com.dying.usercenter.service.UserService;
-import io.netty.util.Timeout;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.dying.usercenter.constant.UserConstant.ADMIN_ROLE;
 import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
@@ -128,6 +124,7 @@ public class UserController {
 
     @GetMapping("/recommend")
     public BaseResponse<Page<User>> recommendUsers(int pageSize , int pageNum , HttpServletRequest request){
+        //TODO 整理到service中
         long userId = userService.getLoginUser(request).getId();
         String redisKey = String.format("partner:user:recommend:%s" , userId);
         ValueOperations valueOperations = redisTemplate.opsForValue();
