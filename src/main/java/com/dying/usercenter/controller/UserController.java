@@ -10,6 +10,7 @@ import com.dying.usercenter.exception.BusinessException;
 import com.dying.usercenter.model.domain.User;
 import com.dying.usercenter.model.request.UserLoginRequest;
 import com.dying.usercenter.model.request.UserRegisterRequest;
+import com.dying.usercenter.model.vo.UserVO;
 import com.dying.usercenter.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -122,6 +123,7 @@ public class UserController {
         return ResultUtils.success(userList);
     }
 
+    //todo
     @GetMapping("/recommend")
     public BaseResponse<Page<User>> recommendUsers(int pageSize , int pageNum , HttpServletRequest request){
         //TODO 整理到service中
@@ -165,5 +167,22 @@ public class UserController {
         boolean result=userService.removeById(id);
         return ResultUtils.success(result);
     }
+
+
+    /**
+     * 获取最匹配的用户
+     * @param num
+     * @param request
+     * @return
+     */
+    @GetMapping("/match")
+    public BaseResponse<List<UserVO>> matchUsers(long num, HttpServletRequest request){
+        if(num <= 0 || num > 20){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        return ResultUtils.success(userService.matchUsers(num , loginUser));
+    }
+
 
 }

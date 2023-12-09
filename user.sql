@@ -39,7 +39,7 @@ create table team
 create table user_team
 (
     id          bigint auto_increment primary key,
-    userId      bigint                             comment '用户id',
+    userId      bigint                             comment '用户id（队长id）',
     teamId      bigint                             comment '队伍id',
     joinTime  datetime                       null  comment '更新时间',
 

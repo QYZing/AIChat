@@ -1,7 +1,9 @@
 package com.dying.usercenter.service;
 
+import com.dying.usercenter.common.BaseResponse;
 import com.dying.usercenter.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.dying.usercenter.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -85,4 +87,13 @@ public interface UserService extends IService<User> {
      * @return true 是
      */
     boolean isAdmin(User userLogin);
+
+    /**
+     * 推荐用户
+     * @param num
+     * @param loginUser
+     * @return
+     */
+    List<UserVO> matchUsers(long num, User loginUser);
+
 }

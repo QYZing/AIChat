@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.dying.usercenter.model.domain.User;
 import com.dying.usercenter.model.dto.TeamQuery;
 import com.dying.usercenter.model.request.TeamJoinRequest;
+import com.dying.usercenter.model.request.TeamQuitRequest;
 import com.dying.usercenter.model.request.TeamUpdateRequest;
 import com.dying.usercenter.model.vo.TeamUserVO;
 
@@ -44,4 +45,13 @@ public interface TeamService extends IService<Team> {
 
     boolean joinTeam(TeamJoinRequest teamJoinRequest, User loginUser);
 
+    /**
+     * 退出队伍
+     * @param teamQuitRequest
+     * @param loginUser
+     * @return
+     */
+    boolean quitTeam(TeamQuitRequest teamQuitRequest, User loginUser);
+
+    boolean deleteTeam(long team, User loginUser);
 }

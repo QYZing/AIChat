@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 自助查询封装类
@@ -14,7 +15,12 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class TeamQuery extends PageRequest {
+
     private Long id;
+    /**
+     * id 列表
+     */
+    private List<Long> idList;
     /**
      * 搜索关键词，同时对队伍名称和描述搜索
      */

@@ -10,7 +10,8 @@ public enum ErrorCode {
     NULL_ERROR(40001, "请求数据为空"  , ""),
     NOT_LOGIN(40002 , "未登录" , ""),
     NO_INFO(40004 , "信息不存在" , ""),
-    NO_AUTH(40003, "无权限" , ""),
+    NO_AUTH(40031, "无权限" , ""),
+    FORBIDDEN(40003, "禁止访问" , ""),
     SYSTEM_ERROR(50000, "系统错误" , "");
 
     private final int code;
