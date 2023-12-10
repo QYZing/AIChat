@@ -127,7 +127,12 @@ public class UserController {
     @GetMapping("/recommend")
     public BaseResponse<Page<User>> recommendUsers(int pageSize , int pageNum , HttpServletRequest request){
         //TODO 整理到service中
-        long userId = userService.getLoginUser(request).getId();
+        long userId = -1;
+        try{
+            userId = userService.getLoginUser(request).getId();
+        }catch (BusinessException e){
+            log.info("未登录");
+        }
         String redisKey = String.format("partner:user:recommend:%s" , userId);
         ValueOperations valueOperations = redisTemplate.opsForValue();
         //如果有缓存，直接读缓存
@@ -176,7 +181,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/match")
-    public BaseResponse<List<UserVO>> matchUsers(long num, HttpServletRequest request){
+    public BaseResponse<List<User>> matchUsers(long num, HttpServletRequest request){
         if(num <= 0 || num > 20){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }

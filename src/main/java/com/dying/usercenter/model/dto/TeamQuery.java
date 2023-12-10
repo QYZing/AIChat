@@ -16,10 +16,6 @@ import java.util.List;
 @Data
 public class TeamQuery extends PageRequest {
 
-    private Long id;
-    /**
-     * id 列表
-     */
     private List<Long> idList;
     /**
      * 搜索关键词，同时对队伍名称和描述搜索

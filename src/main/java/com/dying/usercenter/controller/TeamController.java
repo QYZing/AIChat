@@ -156,7 +156,7 @@ public class TeamController {
     @GetMapping("/list/my/create")
     public BaseResponse<List<TeamUserVO>> listMyTeams(TeamQuery teamQuery , HttpServletRequest request){
         if(teamQuery == null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            teamQuery = new TeamQuery();
         }
         User loginUser = userService.getLoginUser(request);
         teamQuery.setUserId(loginUser.getId());
@@ -177,8 +177,12 @@ public class TeamController {
         }
         User loginUser = userService.getLoginUser(request);
         QueryWrapper<UserTeam> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userId" , loginUser.getId());
+        long userId = loginUser.getId();
+        queryWrapper.eq("userId" , userId);
         List<UserTeam> userTeamList = userTeamService.list(queryWrapper);
+        if(userTeamList.isEmpty()){
+            return ResultUtils.success(new ArrayList<>());
+        }
         //取出不重复的队伍id
         Map<Long, List<UserTeam>> listMap = userTeamList.stream()
                 .collect(Collectors.groupingBy(UserTeam::getTeamId));
