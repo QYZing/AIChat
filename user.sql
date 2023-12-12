@@ -1,4 +1,4 @@
-create table dying.user
+create table user
 (
     id           bigint auto_increment
         primary key,
@@ -49,7 +49,7 @@ create table user_team
 ) comment '用户队伍关系';
 
 
-create table dying.tag
+create table tag
 (
     id         bigint auto_increment
         primary key,
@@ -66,6 +66,6 @@ create table dying.tag
     comment '标签';
 
 create index idx_userId
-    on dying.tag (userId);
+    on tag (userId);
 
 

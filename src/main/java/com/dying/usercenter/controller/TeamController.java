@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,6 @@ import java.util.stream.Collectors;
 // 这个注解返回的都是json restful风格api
 @RestController
 @RequestMapping("/team")
-@CrossOrigin(origins = { "http://localhost:5173" } , allowCredentials = "true")//解决跨域问题
 @Slf4j
 public class TeamController {
     @Resource

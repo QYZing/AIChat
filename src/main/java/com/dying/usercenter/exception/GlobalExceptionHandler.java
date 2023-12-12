@@ -6,9 +6,6 @@ import com.dying.usercenter.common.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
-
 /**
  * 全局异常处理器
  *

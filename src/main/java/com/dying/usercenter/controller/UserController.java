@@ -10,7 +10,6 @@ import com.dying.usercenter.exception.BusinessException;
 import com.dying.usercenter.model.domain.User;
 import com.dying.usercenter.model.request.UserLoginRequest;
 import com.dying.usercenter.model.request.UserRegisterRequest;
-import com.dying.usercenter.model.vo.UserVO;
 import com.dying.usercenter.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +34,6 @@ import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 // 这个注解返回的都是json restful风格api
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = { "http://localhost:5173" } , allowCredentials = "true")//解决跨域问题
 @Slf4j
 public class UserController {
     @Resource

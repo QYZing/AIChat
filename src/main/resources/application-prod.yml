@@ -8,7 +8,7 @@ spring:
     timeout: 86400
   redis:
     port: 6379
-    host: dying.asia
+    host: localhost
     database: 0
 knife4j:
   enable: false

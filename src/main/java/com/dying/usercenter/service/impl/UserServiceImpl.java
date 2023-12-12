@@ -1,31 +1,28 @@
 package com.dying.usercenter.service.impl;
-import java.util.ArrayList;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.dying.usercenter.common.BaseResponse;
 import com.dying.usercenter.common.ErrorCode;
-import com.dying.usercenter.constant.UserConstant;
 import com.dying.usercenter.exception.BusinessException;
-import com.dying.usercenter.model.domain.User;
-import com.dying.usercenter.model.vo.UserVO;
-import com.dying.usercenter.service.UserService;
 import com.dying.usercenter.mapper.UserMapper;
+import com.dying.usercenter.model.domain.User;
+import com.dying.usercenter.service.UserService;
 import com.dying.usercenter.utils.AlgorithmUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import javafx.util.Pair;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.description.method.MethodDescription;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.marshalling.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -263,10 +260,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //按编辑距离从小到大排序
         List<Pair<User , Long>> topUserPairList = list.stream()
-                .sorted((a , b) ->(int) (a.getValue() - b.getValue()))
+                .sorted((a , b) ->(int) (a.getB() - b.getB()))
                 .limit(num)
                 .collect(Collectors.toList());
-        List<Long> userIdList = topUserPairList.stream().map(pair -> pair.getKey().getId()).collect(Collectors.toList());
+        List<Long> userIdList = topUserPairList.stream().map(pair -> pair.getA().getId()).collect(Collectors.toList());
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
         userQueryWrapper.in("id" , userIdList);
 
