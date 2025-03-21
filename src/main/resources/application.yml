@@ -3,7 +3,7 @@ spring:
     name: user-center
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql:// 172.17.118.108:3306/dying
+    url: jdbc:mysql://127.0.0.1:3307/ai_assistant
     username: root
     password: 123456
     # session 失效时间 分钟
@@ -22,7 +22,7 @@ server:
     context-path: /api
     session:
       cookie:
-        domain: dying.asia
+        domain: localhost
         secure: true
         same-site: none
 
@@ -36,6 +36,7 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+# /doc.html
 knife4j:
   enable: true
   openapi:
@@ -54,3 +55,11 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.dying.usercenter.controller
+
+# application.yml
+spark:
+  ai:
+    app-id: 8ca82422
+    api-key: ba155aac8580874baa6c6233c1807e64
+    api-secret: NTc3NWZiMTc0MjNiYzZhNzQ1ZmE4ZmFi
+    host: wss://spark-api.xf-yun.com/v1.1/chat

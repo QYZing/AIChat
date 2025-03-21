@@ -4,30 +4,23 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dying.usercenter.common.ErrorCode;
 import com.dying.usercenter.exception.BusinessException;
-import com.dying.usercenter.mapper.UserMapper;
-import com.dying.usercenter.model.domain.User;
+import com.dying.usercenter.mapper.UsersMapper;
+import com.dying.usercenter.model.domain.Users;
 import com.dying.usercenter.service.UserService;
-import com.dying.usercenter.utils.AlgorithmUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.marshalling.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.dying.usercenter.constant.UserConstant.ADMIN_ROLE;
 import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
@@ -37,11 +30,11 @@ import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User>
+public class UserServiceImpl extends ServiceImpl<UsersMapper, Users>
     implements UserService{
 
     @Resource
-    private UserMapper userMapper;
+    private UsersMapper userMapper;
 
     // 加盐
     private static final String SALT = "dying";
@@ -69,8 +62,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new BusinessException(ErrorCode.PARAMS_ERROR , "输入密码不一致");
         }
         //账户不能重复
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount" , userAccount);
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username" , userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if(count > 0){
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账户重复");
@@ -79,8 +72,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
         // 插入数据
-        User user = new User();
-        user.setUserAccount(userAccount);
+        Users user = new Users();
+        user.setUsername(userAccount);
         user.setUserPassword(encryptPassword);
         boolean result = this.save(user);
         // 不判断会返回null 而id是Long装箱类型，会出错
@@ -91,7 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User userLogin(String userAccount, String userPassword , HttpServletRequest request) {
+    public Users userLogin(String userAccount, String userPassword , HttpServletRequest request) {
         //校验
         if(StringUtils.isAnyBlank(userAccount , userPassword)){
             throw new BusinessException(ErrorCode.NULL_ERROR , "参数不完整");
@@ -112,10 +105,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
         //查询用户是否存在
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("userAccount" , userAccount);
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username" , userAccount);
         queryWrapper.eq("userPassword" , encryptPassword);
-        User user = userMapper.selectOne(queryWrapper);
+        Users user = userMapper.selectOne(queryWrapper);
 
         //用户不存在
         if(user == null){
@@ -124,7 +117,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         //3 用户脱敏
-        User safetyUser = getSafetyUser(user);
+        Users safetyUser = getSafetyUser(user);
 
         //4 记录用户登录态
         request.getSession().setAttribute(USER_LOGIN_STATE , safetyUser);
@@ -137,23 +130,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @return
      */
     @Override
-    public User getSafetyUser(User originUser){
+    public Users getSafetyUser(Users originUser){
         if(originUser == null){
             return null;
         }
-        User safetyUser = new User();
+        Users safetyUser = new Users();
         safetyUser.setId(originUser.getId());
         safetyUser.setUsername(originUser.getUsername());
-        safetyUser.setUserAccount(originUser.getUserAccount());
-        safetyUser.setAvatarUrl(originUser.getAvatarUrl());
-        safetyUser.setGender(originUser.getGender());
-        safetyUser.setPhone(originUser.getPhone());
-        safetyUser.setEmail(originUser.getEmail());
-        safetyUser.setUserRole(originUser.getUserRole());
-        safetyUser.setUserStatus(originUser.getUserStatus());
-        safetyUser.setCreateTime(originUser.getCreateTime());
-        safetyUser.setTags(originUser.getTags());
-        safetyUser.setProfile(originUser.getProfile());
         return safetyUser;
     }
 
@@ -175,20 +158,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * @return
      */
     @Override
-    public List<User> searchUsersByTags(List<String> tagNameList){
+    public List<Users> searchUsersByTags(List<String> tagNameList){
         if(CollectionUtils.isEmpty(tagNameList)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
         for(String tagName : tagNameList){
             queryWrapper = queryWrapper.like("tags" , tagName);
         }
-        List<User> userList = userMapper.selectList(queryWrapper);
+        List<Users> userList = userMapper.selectList(queryWrapper);
         return userList.stream().map(this::getSafetyUser).collect(Collectors.toList());
     }
 
     @Override
-    public int updateUser(User user, User loginUser) {
+    public int updateUser(Users user, Users loginUser) {
         if(user == null || loginUser == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -200,7 +183,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if(!isAdmin(loginUser) && id != loginUser.getId()){
             throw new BusinessException(ErrorCode.NO_AUTH);
         }
-        User oldUser = userMapper.selectById(id);
+        Users oldUser = userMapper.selectById(id);
         if(oldUser == null){
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
@@ -208,7 +191,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User getLoginUser(HttpServletRequest request) {
+    public Users getLoginUser(HttpServletRequest request) {
         if(request == null){
             return null;
         }
@@ -216,66 +199,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if(userObj == null){
             throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
-        return (User) userObj;
+        return (Users) userObj;
     }
 
     @Override
     public boolean isAdmin(HttpServletRequest request) {
         // 鉴权 仅管理员查询
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User user = (User) userObj;
-        return user != null && user.getUserRole() == ADMIN_ROLE;
+        Users user = (Users) userObj;
+//        return user != null && user.getUserRole() == ADMIN_ROLE;
+        return false;
     }
 
     @Override
-    public boolean isAdmin(User userLogin) {
-        return userLogin != null && userLogin.getUserRole() == ADMIN_ROLE;
-    }
-
-    @Override
-    public List<User> matchUsers(long num, User loginUser) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id" , "tags");
-        queryWrapper.isNotNull("tags");
-        List<User> userList = this.list(queryWrapper);
-        String tags = loginUser.getTags();
-        Gson gson = new Gson();
-        List<String> tagList = gson.fromJson(tags, new TypeToken<List<String>>() {
-                                }.getType());
-        //用户列表的下标 =》 相似度
-        List<Pair<User , Long>> list = new ArrayList<>();
-        //一次计算所有用户和当前用户的相似度
-        for(int i = 0;  i < userList.size(); i++){
-            User user = userList.get(i);
-            String userTags = user.getTags();
-            //无标签或者为当前用户自己
-            if(StringUtils.isBlank(userTags) || Objects.equals(user.getId(), loginUser.getId())){
-                continue;
-            }
-            List<String> userTagList = gson.fromJson(userTags, new TypeToken<List<String>>() {
-            }.getType());
-            //计算分数
-            long distance = AlgorithmUtils.minDistance(tagList , userTagList);
-            list.add(new Pair<>(user , distance));
-        }
-        //按编辑距离从小到大排序
-        List<Pair<User , Long>> topUserPairList = list.stream()
-                .sorted((a , b) ->(int) (a.getB() - b.getB()))
-                .limit(num)
-                .collect(Collectors.toList());
-        List<Long> userIdList = topUserPairList.stream().map(pair -> pair.getA().getId()).collect(Collectors.toList());
-        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-        userQueryWrapper.in("id" , userIdList);
-
-        Map<Long , List<User>> userIdUserListMap = this.list(userQueryWrapper)
-                .stream()
-                .map(user -> getSafetyUser(user))
-                .collect(Collectors.groupingBy(User::getId));
-        List<User> finalUserList = new ArrayList<>();
-        for(Long userId : userIdList){
-            finalUserList.add(userIdUserListMap.get(userId).get(0));
-        }
-        return finalUserList;
+    public boolean isAdmin(Users userLogin) {
+//        return userLogin != null && userLogin.getUserRole() == ADMIN_ROLE;
+        return false;
     }
 }
 

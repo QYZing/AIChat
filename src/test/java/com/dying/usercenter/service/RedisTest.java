@@ -1,6 +1,6 @@
 package com.dying.usercenter.service;
 
-import com.dying.usercenter.model.domain.User;
+import com.dying.usercenter.model.domain.Users;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +19,8 @@ public class RedisTest {
         ValueOperations valueOperations = redisTemplate.opsForValue();
         //增
         valueOperations.set("dying" ,  "123");
-        User user = new User();
+        Users user = new Users();
         user.setUsername("user");
-        user.setUserAccount("account");
         valueOperations.set("user" , user);
         //查
         Object dying = valueOperations.get("dying");

@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.dying</groupId>
-    <artifactId>user-center</artifactId>
+    <artifactId>AIChat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>user-center</name>
     <description>user-center</description>
@@ -21,6 +21,70 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!--讯飞开放平台sdk-->
+        <dependency>
+            <groupId>io.github.briqt</groupId>
+            <artifactId>xunfei-spark4j</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.xfyun</groupId>
+            <artifactId>websdk-java-speech</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.xfyun</groupId>
+            <artifactId>websdk-java-nlp</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <!--   音视频   -->
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-all-deps</artifactId>
+            <version>3.0.1</version>
+            <exclusions>
+                <!--  排除windows 32位系统      -->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-win32</artifactId>
+                </exclusion>
+                <!--  排除linux 32位系统      -->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-linux32</artifactId>
+                </exclusion>
+                <!-- 排除Mac系统-->
+                <exclusion>
+                    <groupId>ws.schild</groupId>
+                    <artifactId>jave-nativebin-osx64</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.xfyun</groupId>
+            <artifactId>websdk-java-ocr</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.xfyun</groupId>
+            <artifactId>websdk-java-face-detector</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.xfyun</groupId>
+            <artifactId>websdk-java-spark</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId >
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -113,6 +177,20 @@
             <version>2.3.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+            <version>2.7.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,6 +205,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
         </plugins>

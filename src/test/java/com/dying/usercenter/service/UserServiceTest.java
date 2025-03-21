@@ -1,8 +1,7 @@
 package com.dying.usercenter.service;
 
 
-import com.dying.usercenter.model.domain.User;
-import org.assertj.core.api.Assert;
+import com.dying.usercenter.model.domain.Users;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,14 +23,9 @@ class UserServiceTest {
 
     @Test
     public void testAdduser(){
-        User user = new User();
+        Users user = new Users();
         user.setUsername("dying");
-        user.setUserAccount("123");
-        user.setAvatarUrl("xxx");
-        user.setGender(0);
         user.setUserPassword("123");
-        user.setPhone("123");
-        user.setEmail("456");
         boolean result = userService.save(user);
         System.out.println(user.getId());
         Assertions.assertTrue(result);
@@ -78,7 +72,7 @@ class UserServiceTest {
     @Test
     public void testSearchUsersByTags(){
         List<String> tagNameList = Arrays.asList("java" , "python");
-        List<User> userList = userService.searchUsersByTags(tagNameList);
+        List<Users> userList = userService.searchUsersByTags(tagNameList);
         Assertions.assertNotNull(userList);
     }
 }

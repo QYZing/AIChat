@@ -7,7 +7,7 @@ import com.dying.usercenter.common.BaseResponse;
 import com.dying.usercenter.common.ErrorCode;
 import com.dying.usercenter.common.ResultUtils;
 import com.dying.usercenter.exception.BusinessException;
-import com.dying.usercenter.model.domain.User;
+import com.dying.usercenter.model.domain.Users;
 import com.dying.usercenter.model.request.UserLoginRequest;
 import com.dying.usercenter.model.request.UserRegisterRequest;
 import com.dying.usercenter.service.UserService;
@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest , HttpServletRequest request){
+    public BaseResponse<Users> userLogin(@RequestBody UserLoginRequest userLoginRequest , HttpServletRequest request){
         if (userLoginRequest == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR );
         }
@@ -67,7 +67,7 @@ public class UserController {
         if(StringUtils.isAnyBlank(userAccount , userPassword )){
             throw new BusinessException(ErrorCode.NULL_ERROR , "输入参数为空");
         }
-        User result =  userService.userLogin(userAccount, userPassword , request);
+        Users result =  userService.userLogin(userAccount, userPassword , request);
         return ResultUtils.success(result);
     }
 
@@ -81,49 +81,49 @@ public class UserController {
     }
 
     @GetMapping("/current")
-    public BaseResponse<User> getCurrentUser(HttpServletRequest request){
+    public BaseResponse<Users> getCurrentUser(HttpServletRequest request){
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
+        Users currentUser = (Users) userObj;
         if(currentUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN , "用户未登录");
         }
         long userId = currentUser.getId();
         //todo 校验用户是否合法
-        User user = userService.getById(userId);
-        User result = userService.getSafetyUser(user);
+        Users user = userService.getById(userId);
+        Users result = userService.getSafetyUser(user);
         return ResultUtils.success(result);
     }
 
     @GetMapping("/search")
-    public BaseResponse<List<User>> searchUsers(String username , HttpServletRequest request){
+    public BaseResponse<List<Users>> searchUsers(String username , HttpServletRequest request){
         // 鉴权 仅管理员查询
         if(!userService.isAdmin(request)){
             throw new BusinessException(ErrorCode.NO_AUTH , "不是管理员");
         }
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
         if(!StringUtils.isNotBlank(username)){
             //模糊查询
             queryWrapper.like("username" , username);
         }
-        List<User> userlist = userService.list(queryWrapper);
-        List<User> result = userlist.stream().map(user -> {
+        List<Users> userlist = userService.list(queryWrapper);
+        List<Users> result = userlist.stream().map(user -> {
             return userService.getSafetyUser(user);
         }).collect(Collectors.toList());
         return ResultUtils.success(result);
     }
 
     @GetMapping("/search/tags")
-    public BaseResponse<List<User>> searchUsersByTags( @RequestParam(required = false)  List<String> tagNameList){
+    public BaseResponse<List<Users>> searchUsersByTags( @RequestParam(required = false)  List<String> tagNameList){
         if(CollectionUtils.isEmpty(tagNameList)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        List<User> userList = userService.searchUsersByTags(tagNameList);
+        List<Users> userList = userService.searchUsersByTags(tagNameList);
         return ResultUtils.success(userList);
     }
 
     //todo
     @GetMapping("/recommend")
-    public BaseResponse<Page<User>> recommendUsers(int pageSize , int pageNum , HttpServletRequest request){
+    public BaseResponse<Page<Users>> recommendUsers(int pageSize , int pageNum , HttpServletRequest request){
         //TODO 整理到service中
         long userId = -1;
         try{
@@ -134,12 +134,12 @@ public class UserController {
         String redisKey = String.format("partner:user:recommend:%s" , userId);
         ValueOperations valueOperations = redisTemplate.opsForValue();
         //如果有缓存，直接读缓存
-        Page<User> userPage = (Page<User>) valueOperations.get(redisKey);
+        Page<Users> userPage = (Page<Users>) valueOperations.get(redisKey);
         if(userPage != null){
              return ResultUtils.success(userPage);
         }
         //无缓冲
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
         userPage = userService.page(new Page<>(pageNum , pageSize) ,  queryWrapper);
         try {
             valueOperations.set(redisKey , userPage  , 30000 , TimeUnit.MICROSECONDS);
@@ -150,13 +150,13 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public BaseResponse<Integer> updateUser(@RequestBody User user , HttpServletRequest request){
+    public BaseResponse<Integer> updateUser(@RequestBody Users user , HttpServletRequest request){
         //校验参数是否为空
         if(user == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         //TODO 只有id其他没有时不允许更新
-        User loginUser = userService.getLoginUser(request);
+        Users loginUser = userService.getLoginUser(request);
         int result = userService.updateUser(user , loginUser);
         return ResultUtils.success(result);
     }
@@ -170,22 +170,4 @@ public class UserController {
         boolean result=userService.removeById(id);
         return ResultUtils.success(result);
     }
-
-
-    /**
-     * 获取最匹配的用户
-     * @param num
-     * @param request
-     * @return
-     */
-    @GetMapping("/match")
-    public BaseResponse<List<User>> matchUsers(long num, HttpServletRequest request){
-        if(num <= 0 || num > 20){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        User loginUser = userService.getLoginUser(request);
-        return ResultUtils.success(userService.matchUsers(num , loginUser));
-    }
-
-
 }

@@ -1,22 +1,17 @@
 package com.dying.usercenter.service;
 
-import com.dying.usercenter.common.BaseResponse;
-import com.dying.usercenter.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.dying.usercenter.model.vo.UserVO;
+import com.dying.usercenter.model.domain.Users;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-
-import static com.dying.usercenter.constant.UserConstant.ADMIN_ROLE;
-import static com.dying.usercenter.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
 * @author dying
 * @description 用户服务
 * @createDate 2023-11-09 20:14:54
 */
-public interface UserService extends IService<User> {
+public interface UserService extends IService<Users> {
     /**
      * 用户注册
      *
@@ -33,7 +28,7 @@ public interface UserService extends IService<User> {
      * @param userPassword 用户密码
      * @return 脱敏用户信息
      */
-    User userLogin(String userAccount , String userPassword , HttpServletRequest request);
+    Users userLogin(String userAccount , String userPassword , HttpServletRequest request);
 
 
     /**
@@ -41,7 +36,7 @@ public interface UserService extends IService<User> {
      * @param originUser 原生user
      * @return
      */
-    User getSafetyUser(User originUser);
+    Users getSafetyUser(Users originUser);
 
     /**
      * 请求用户注销
@@ -56,7 +51,7 @@ public interface UserService extends IService<User> {
      * @param tagList 用户拥有的标签
      * @return
      */
-    List<User> searchUsersByTags(List<String> tagList);
+    List<Users> searchUsersByTags(List<String> tagList);
 
     /**
      * 更新用户
@@ -65,13 +60,13 @@ public interface UserService extends IService<User> {
      * @param loginUser 当前登录的用户
      * @return
      */
-    int updateUser(User user , User loginUser);
+    int updateUser(Users user , Users loginUser);
 
     /**
      * 获取当前登录用户信息
      * @return
      */
-    User getLoginUser(HttpServletRequest request);
+    Users getLoginUser(HttpServletRequest request);
 
     /**
      * 是否为管理员
@@ -86,14 +81,5 @@ public interface UserService extends IService<User> {
      * @param userLogin 用户
      * @return true 是
      */
-    boolean isAdmin(User userLogin);
-
-    /**
-     * 推荐用户
-     * @param num
-     * @param loginUser
-     * @return
-     */
-    List<User> matchUsers(long num, User loginUser);
-
+    boolean isAdmin(Users userLogin);
 }

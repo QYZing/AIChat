@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dying.usercenter.mapper.MessagesMapper">
+
+    <resultMap id="BaseResultMap" type="com.dying.usercenter.model.domain.Messages">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="session_id" column="session_id" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="role" column="role" jdbcType="OTHER"/>
+            <result property="created_at" column="created_at" jdbcType="TIMESTAMP"/>
+            <result property="is_current" column="is_current" jdbcType="TINYINT"/>
+            <result property="is_temp" column="is_temp" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,session_id,content,
+        role,created_at,is_current,
+        is_temp
+    </sql>
+</mapper>

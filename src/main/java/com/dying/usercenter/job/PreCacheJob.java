@@ -2,7 +2,7 @@ package com.dying.usercenter.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.dying.usercenter.model.domain.User;
+import com.dying.usercenter.model.domain.Users;
 import com.dying.usercenter.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -48,8 +48,8 @@ public class PreCacheJob {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        Page<User> userPage = userService.page(new Page<>(1 , 20) ,  queryWrapper);
+        QueryWrapper<Users> queryWrapper = new QueryWrapper<>();
+        Page<Users> userPage = userService.page(new Page<>(1 , 20) ,  queryWrapper);
         for(Long userId : mainUserList){
             //无缓冲
             String redisKey = String.format("partner:user:recommend:%s" , userId);
