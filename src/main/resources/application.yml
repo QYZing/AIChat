@@ -59,7 +59,7 @@ knife4j:
 # application.yml
 spark:
   ai:
-    app-id: 8ca82422
-    api-key: ba155aac8580874baa6c6233c1807e64
-    api-secret: NTc3NWZiMTc0MjNiYzZhNzQ1ZmE4ZmFi
-    host: wss://spark-api.xf-yun.com/v1.1/chat
+    app-id:
+    api-key:
+    api-secret:
+    host:
